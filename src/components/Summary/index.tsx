@@ -6,8 +6,31 @@ import { useContext } from "react";
 import { TransactionsContext } from "../../TransactionsContext";
 
 export function Summary() {
-    const transactions = useContext(TransactionsContext);
-    console.log(transactions);
+    const { transactions } = useContext(TransactionsContext);
+
+    // const totalDeposits = transactions.reduce((acc, transaction) => {
+    //     if (transaction.type === 'deposit') {
+    //         return acc + transaction.amount;
+    //     }
+
+    //     return acc;
+    // }, 0)
+
+    const summary = transactions.reduce((acc, transaction) => {
+        if (transaction.type === 'deposit') {
+            acc.deposits += transaction.amount;
+            acc.total += transaction.amount;
+        } else {
+            acc.withdraws += transaction.amount;
+            acc.total -= transaction.amount;
+        }
+        return acc;
+
+    }, {
+        deposits: 0,
+        withdraws: 0,
+        total: 0,
+    })
 
     return (
         <Container>
@@ -17,7 +40,11 @@ export function Summary() {
                     <img src={incomeImg} alt="Entradas"></img>
                 </header>
                 <strong>
-                    R$1.000,00
+                    {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+
+                    }).format(summary.deposits)}
                 </strong>
             </div>
 
@@ -27,7 +54,11 @@ export function Summary() {
                     <img src={outcomeImg} alt="Saidas"></img>
                 </header>
                 <strong>
-                    - R$500,00
+                    -          {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+
+                    }).format(summary.withdraws)}
                 </strong>
             </div>
 
@@ -37,7 +68,11 @@ export function Summary() {
                     <img src={totalImg} alt="Total"></img>
                 </header>
                 <strong>
-                    R$500,00
+                    {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+
+                    }).format(summary.total)}
                 </strong>
             </div>
 
